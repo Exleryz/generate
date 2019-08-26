@@ -1,0 +1,21 @@
+default:
+  config:
+    package: com.exler.test
+    entity:
+      name: admin
+    controller:
+      dir: controller
+      suffix: Controller
+    service:
+      interface:
+        # 是否需要 service的接口文件 true 需要 false 不需要
+        isNeed: true
+        dir: service
+        suffix: Service
+      impl:
+        dir: service/impl
+        suffix: ServiceImpl
+    dao:
+      name: mapper
+      # dao后缀名
+      suffic: mapper
