@@ -8,6 +8,7 @@ default:
     package: com.exler.test
     entity:
       name: admin
+      dir: entity
     controller:
       dir: controller
       suffix: Controller

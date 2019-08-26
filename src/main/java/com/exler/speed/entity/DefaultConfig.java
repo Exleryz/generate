@@ -3,6 +3,7 @@ package com.exler.speed.entity;
 import com.exler.speed.util.StringUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.util.Properties;
@@ -33,6 +34,12 @@ public class DefaultConfig {
      * 需要生成的实体类名
      */
     private String entityName;
+
+    /**
+     * 首字母大写 up
+     */
+    private String entityNameU;
+    private String entityDir;
 
     /**
      * mvc层文件夹名
@@ -68,14 +75,17 @@ public class DefaultConfig {
             // 对于getAbsolutePath()函数，则不管”.”、“..”，返回当前的路径加上你在new File()时设定的路径
             // 至于getPath()函数，得到的只是你在new File()时设定的路径
             String projectPath = file.getAbsolutePath();
-            // 生成 源文件的目录
-            this.generateDir = projectPath + "/src/main/resources/generate";
-        } else {
-            this.generateDir = generateDir;
+            // todo 默认生成 源文件的目录
+            generateDir = projectPath + "/src/main/resources/generate";
+            System.out.println(generateDir);
         }
+        File test = new File(generateDir);
+        this.generateDir = test.getAbsolutePath();
         fileSuffix = properties.getProperty("default.config.suffix", ".java");
         packageName = properties.getProperty("default.config.package", "com.test.generate");
         entityName = properties.getProperty("default.config.entity.name", "user");
+        entityNameU = StringUtil.upFirst(entityName);
+        entityDir = properties.getProperty("default.config.entity.dir", "entity");
         //controller
         controllerDirName = properties.getProperty("default.config.controller.dir", DefaultName.CONTROLLER);
         controllerSuffix = properties.getProperty("default.config.controller.suffix", StringUtil.upFirst(DefaultName.CONTROLLER));
@@ -102,6 +112,8 @@ public class DefaultConfig {
                 "    \"fileSuffix\": \"" + fileSuffix + "\",\n" +
                 "    \"packageName\": \"" + packageName + "\",\n" +
                 "    \"entityName\": \"" + entityName + "\",\n" +
+                "    \"entityNameU\": \"" + entityNameU + "\",\n" +
+                "    \"entityDir\": \"" + entityDir + "\",\n" +
                 "    \"controllerDirName\": \"" + controllerDirName + "\",\n" +
                 "    \"controllerSuffix\": \"" + controllerSuffix + "\",\n" +
                 "    \"serviceDirName\": \"" + serviceDirName + "\",\n" +
@@ -114,4 +126,34 @@ public class DefaultConfig {
                 "    \"generateSql\": \"" + generateSql + "\"\n" +
                 "}";
     }
+
+    private Context context;
+
+    /**
+     * 构造上下文(Model)
+     *
+     * @return
+     */
+    public Context getContext() {
+        if (context == null) {
+            context = new Context();
+
+            context.setVariable("packageName", packageName);
+            // 小写的
+            context.setVariable("entityName", entityName);
+            // 大写的
+            context.setVariable("entityNameU", entityNameU);
+            context.setVariable("entityDir", entityDir);
+            context.setVariable("controllerDirName", controllerDirName);
+            context.setVariable("controllerSuffix", controllerSuffix);
+            context.setVariable("serviceDirName", serviceDirName);
+            context.setVariable("serviceSuffix", serviceSuffix);
+            context.setVariable("serviceImplDirName", serviceImplDirName);
+            context.setVariable("serviceImplSuffix", serviceImplSuffix);
+            context.setVariable("daoDirName", daoDirName);
+            context.setVariable("daoSuffix", daoSuffix);
+        }
+        return context;
+    }
+
 }

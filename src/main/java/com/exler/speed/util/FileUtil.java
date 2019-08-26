@@ -1,16 +1,14 @@
 package com.exler.speed.util;
 
+import com.exler.speed.entity.DefaultConfig;
+import com.exler.speed.template.Generate;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * @Description: TODO
- * @Company: BIG-FINTECH
- * @ProjectName: iRich
- * @author: Exler(yz)
- * @GmtCreate: 2019/8/23 11:47
+ * @author Exler(yz)
  */
 
 @Slf4j
@@ -31,18 +29,20 @@ public class FileUtil {
 
 
     /**
-     * @param dirPath    项目生成路径/mvcPath
-     * @param suffix     后缀
-     * @param entityName 实体类名称
+     * @param dirPath 项目生成路径/mvcPath
+     * @param config  配置
+     * @param suffix  后缀
      */
-    public static void generateFile(String dirPath, String suffix, String entityName) {
+    public static void generateFile(String dirPath, DefaultConfig config, String suffix) {
         // 生成entity mvc文件
-        String filePath = String.format("%s/%s%s.java", dirPath, entityName, StringUtil.upFirst(suffix));
+        String filePath = String.format("%s/%s%s%s", dirPath, config.getEntityNameU(), suffix, config.getFileSuffix());
         File file = new File(filePath);
         if (!file.exists()) {
             try {
                 boolean flag = file.createNewFile();
-                log.info("{}{}.java 文件生成{}", entityName, StringUtil.upFirst(suffix), flag);
+                log.info("{}{}.java 文件生成{}", config.getEntityNameU(), suffix, flag);
+                generateCodeFile(config, filePath, suffix);
+                log.info("代码生成");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -60,21 +60,24 @@ public class FileUtil {
         }
     }
 
+    public static boolean generateCodeFile(DefaultConfig config, String filePath, String suffix) {
+        Generate generate = new Generate();
+        generate.generate(config, filePath, suffix);
+        return true;
+    }
+
     /**
      * 生成对应MVC文件
      *
-     * @param generatePath
+     * @param config
      * @param mvcPath
      * @param entityName
+     * @param suffix
      */
-    public static void generate(String generatePath, String mvcPath, String entityName) {
-        String[] split = mvcPath.split("/");
-        String suffix = mvcPath;
-        if (split.length > 1) {
-            suffix = split[0] + StringUtil.upFirst(split[1]);
-        }
-        String dirPath = generateDir(generatePath, mvcPath);
-        generateFile(dirPath, suffix, entityName);
+    public static void generate(DefaultConfig config, String mvcPath, String entityName, String suffix) {
+        String dirPath = generateDir(config.getGenerateDir(), mvcPath);
+//        generateFile(dirPath, mvcPath,entityName, suffix);
+        generateFile(dirPath, config, suffix);
     }
 
 }
