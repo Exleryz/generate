@@ -2,7 +2,9 @@ package com.exler.speed.entity;
 
 import com.exler.speed.util.StringUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.Properties;
 
 /**
@@ -11,6 +13,16 @@ import java.util.Properties;
 
 @Data
 public class DefaultConfig {
+
+    /**
+     * 代码生成路径
+     */
+    private String generateDir;
+
+    /**
+     * 生成文件后缀名
+     */
+    private String fileSuffix;
 
     /**
      * 基础包名
@@ -49,6 +61,19 @@ public class DefaultConfig {
     private Boolean generateSql;
 
     public DefaultConfig(Properties properties) {
+        String generateDir = properties.getProperty("default.config.generate.dir");
+        if (StringUtils.isEmpty(generateDir)) {
+            File file = new File("");
+            // 对于getCanonicalPath()函数，"."就表示当前的文件夹，而”..“则表示当前文件夹的上一级文件夹
+            // 对于getAbsolutePath()函数，则不管”.”、“..”，返回当前的路径加上你在new File()时设定的路径
+            // 至于getPath()函数，得到的只是你在new File()时设定的路径
+            String projectPath = file.getAbsolutePath();
+            // 生成 源文件的目录
+            this.generateDir = projectPath + "/src/main/resources/generate";
+        } else {
+            this.generateDir = generateDir;
+        }
+        fileSuffix = properties.getProperty("default.config.suffix", ".java");
         packageName = properties.getProperty("default.config.package", "com.test.generate");
         entityName = properties.getProperty("default.config.entity.name", "user");
         //controller
@@ -73,6 +98,8 @@ public class DefaultConfig {
     @Override
     public String toString() {
         return "{\n" +
+                "    \"generateDir\": \"" + generateDir + "\",\n" +
+                "    \"fileSuffix\": \"" + fileSuffix + "\",\n" +
                 "    \"packageName\": \"" + packageName + "\",\n" +
                 "    \"entityName\": \"" + entityName + "\",\n" +
                 "    \"controllerDirName\": \"" + controllerDirName + "\",\n" +

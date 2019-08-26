@@ -1,27 +1,35 @@
 package com.exler.speed;
 
+import com.exler.speed.convert.yaml.YamlConvert;
+import com.exler.speed.entity.DefaultConfig;
 import com.exler.speed.util.FileUtil;
 import com.exler.speed.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
 
 @Slf4j
-@SpringBootApplication
 public class GenerateApplication {
 
-    public static void main(String[] args) throws IOException {
-        SpringApplication.run(GenerateApplication.class, args);
+    public static ApplicationContext applicationContext = null;
+
+    public static void main(String[] args) {
         GenerateApplication generateApplication = new GenerateApplication();
-        generateApplication.test(args);
+        generateApplication.start();
+    }
+
+    private void start() {
+        // 获取 yml 配置 参数
+        YamlConvert convert = new YamlConvert();
+        DefaultConfig configProperties = convert.getConfigProperties();
     }
 
     public void test(String[] args) throws IOException {
-        System.out.println(this.getClass().getResource(""));
+        DefaultConfig config = applicationContext.getBean("defaultConfig", DefaultConfig.class);
+        System.out.println(config.getPackageName());
         String entityName = "User";
         if (StringUtils.isEmpty(entityName)) {
             log.error("生成实体类名称为空");

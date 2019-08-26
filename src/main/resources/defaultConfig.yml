@@ -1,5 +1,10 @@
 default:
   config:
+    generate:
+      # 代码生成文件夹
+      dir:
+    # 需要生成的文件后缀名
+    suffix: .java
     package: com.exler.test
     entity:
       name: admin
