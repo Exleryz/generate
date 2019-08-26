@@ -1,49 +1,61 @@
-package [(${packageName})].[(${serviceDirName})];
+package [(${packageName})].[(${serviceSuffix})].impl;
 
 import com.alibaba.fastjson.JSONObject;
-import [(${packageName})].[(${entityDir})].[(${entityNameU})];
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dayou.cipher.entity.[(${entityName})];
+import com.dayou.cipher.mapper.[(${entityName})][(${daoSuffix})];
+import com.dayou.cipher.service.[(${entityName})][(${serviceSuffix})];
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author Exler(yz)
  */
-public interface [(${entityNameU})]Service {
 
-    /**
-     * 新增
-     *
-     * @param [(${entityName})]
-     */
-    void create([(${entityNameU})] [(${entityName})]);
+@Service
+public class [(${entityNameU})][(${serviceImplSuffix})] implements [(${entityNameU})][(${serviceSuffix})] {
 
-    /**
-     * 根据id获取 [(${entityName})]
-     *
-     * @param id
-     * @return
-     */
-    [(${entityNameU})] get[(${entityNameU})]ById(Integer id);
+    @Autowired
+    [(${entityNameU})][(${daoSuffix})] [(${entityName})][(${daoSuffix})];
 
-    /**
-     * 获取[(${entityName})]列表
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    JSONObject get[(${entityNameU})]List(Integer pageNum, Integer pageSize);
+    @Override
+    public void create([(${entityNameU})] [(${entityName})]) {
+        [(${entityName})][(${daoSuffix})].insert([(${entityName})]);
+    }
 
-    /**
-     * 根据id删除
-     *
-     * @param id
-     */
-    void delete[(${entityNameU})](Integer id);
+    @Override
+    public [(${entityNameU})] get[(${entityNameU})]ById(Integer id) {
+        [(${entityNameU})] [(${entityName})] = [(${entityName})][(${daoSuffix})].selectById(id);
+        return [(${entityName})];
+    }
 
-    /**
-     * 更新
-     *
-     * @param id
-     * @param [(${entityName})]
-     */
-    void update[(${entityNameU})](Integer id, [(${entityNameU})] [(${entityName})]);
+    @Override
+    public JSONObject get[(${entityNameU})]List(Integer pageNum, Integer pageSize) {
+        Page<[(${entityNameU})]> page = new Page<[(${entityNameU})]>(pageNum, pageSize);
+        QueryWrapper<[(${entityNameU})]> queryWrapper = new QueryWrapper<[(${entityNameU})]>();
+        IPage<[(${entityNameU})]> iPage = [(${entityName})][(${daoSuffix})].selectPage(page, queryWrapper);
+        List<[(${entityNameU})]> records = iPage.getRecords();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("dataList", records);
+        // 总页数
+        jsonObject.put("allPageNum", iPage.getPages());
+        // 总记录数
+        jsonObject.put("allNum", iPage.getTotal());
+        return jsonObject;
+    }
+
+    @Override
+    public void delete[(${entityNameU})](Integer id) {
+        [(${entityName})][(${daoSuffix})].deleteById(id);
+    }
+
+    @Override
+    public void update[(${entityNameU})](Integer id, [(${entityNameU})] [(${entityName})]) {
+        [(${entityName})].setId(id);
+        [(${entityName})][(${daoSuffix})].updateById([(${entityName})]);
+    }
 }

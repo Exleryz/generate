@@ -31,6 +31,7 @@ public class Generate {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // 报错模板文件不存在
         templateEngine.process(suffix, config.getContext(), write);
     }
 
